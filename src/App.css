@@ -189,7 +189,7 @@ main {
 .words {
   font-size: 20px;
   padding: 20px;
-  color: 463730;
+  color: #463730;
   border: 1px solid var(--text);
   border-radius: 4px;
   max-height: 280px;

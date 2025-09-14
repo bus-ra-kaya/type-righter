@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import {useState} from 'react'
 import { nanoid } from 'nanoid'
 
 type textInfo = {
@@ -18,7 +18,6 @@ export default function Main({testText}: MainProps){
   const [currentPos, setCurrentPos] = useState<number>(0)
   const [wrongCount, setWrongCount] = useState<number>(0)
   const [wordsFinished, setWordsFinished] = useState<number>(0)
-  const [time,setTime] = useState<number>(0)
 
     function reset():void{
     setWordList(textWithInfo());

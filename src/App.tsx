@@ -19,7 +19,7 @@ export default function App() {
         </div>
         <Theme theme={theme} setTheme={setTheme}/>
       </section>
-     <Selector setTestText={setTestText} theme={theme}/>
+     <Selector setTestText={setTestText} theme={theme} />
     </header>
     <Main testText={testText}/>
     <footer>
