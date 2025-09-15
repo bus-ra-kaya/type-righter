@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import { nanoid } from 'nanoid'
 
 type textInfo = {
@@ -14,18 +14,31 @@ interface MainProps {
 
 export default function Main({testText}: MainProps){
   const [typed, setTyped] = useState<textInfo[]>([])
-  const [wordList, setWordList] = useState<textInfo[]>(() => textWithInfo());
+  const [wordList, setWordList] = useState<textInfo[]>(() => textWithInfo(testText));
   const [currentPos, setCurrentPos] = useState<number>(0)
   const [wrongCount, setWrongCount] = useState<number>(0)
   const [wordsFinished, setWordsFinished] = useState<number>(0)
 
+  function textWithInfo(text: string):textInfo[]{
+    return text.split("").map(letter => ({
+      value: letter,
+      className: undefined,
+      entered: null,
+      time: null,
+    }))
+   } 
+
     function reset():void{
-    setWordList(textWithInfo());
-    setTyped([]);
-    setCurrentPos(0);
-    setWrongCount(0);
-    setWordsFinished(0);
+      setWordList(textWithInfo(testText));
+      setTyped([]);
+      setCurrentPos(0);
+      setWrongCount(0);
+      setWordsFinished(0);
   }
+
+  useEffect(() => {
+    setWordList(textWithInfo(testText));
+  }, [testText]);
 
   const spaceIndexes: number[] = [];
   wordList.forEach((char, idx) => {
@@ -34,14 +47,7 @@ export default function Main({testText}: MainProps){
   }});
 
   const cursor: string = "|";
-
-  let progress = `${wordsFinished} / ${spaceIndexes.length}`
-
-  function textWithInfo():textInfo[]{
-    const textArr = testText.split("")
-    
-    return textArr.map(letter => ({value: letter, className: undefined, entered: null, time: null}))
-  } 
+  let progress = `${wordsFinished} / ${spaceIndexes.length +1}`
 
  function textEdit(e: React.KeyboardEvent<HTMLElement>) {
   e.preventDefault();

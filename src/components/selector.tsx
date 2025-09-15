@@ -10,6 +10,8 @@ interface SelectorProps {
 export default function Selector({setTestText, theme}: SelectorProps){
     
     const [isItQuote,setIsItQuote] = useState<boolean>(true)
+    const [punctuated, setPunctuated] = useState<boolean>(false)
+    const [numbered,setNumbered] = useState<boolean>(false)
     
       function getQuote(): void{
         const index = Math.floor(Math.random() * quotes.length);
@@ -22,9 +24,20 @@ export default function Selector({setTestText, theme}: SelectorProps){
         const words = Array.from({length: count}, () => {
          return (wordlist[Math.floor(Math.random() * wordlist.length)])
         }).join(" ");
-        setTestText(words);
         setIsItQuote(false);
+
+        if(!punctuated && !numbered) {
+        setTestText(words);
       }
+      else if(punctuated){
+        const punctuations = [".", ",", "!", "?", ";", ":"];
+        let chars = words.split(" ");
+      } 
+      else if(numbered){
+
+      }
+      }
+      
 
       useEffect (() => {
         getWords();
@@ -48,9 +61,9 @@ export default function Selector({setTestText, theme}: SelectorProps){
         </div>
         <div>
           <span className="choose-selector">Include: </span> 
-          <button className={`selector ${isItQuote && "disabled"}`}>
+          <button className={`selector ${isItQuote && "disabled"}`} onClick={() => {setNumbered(prev => !prev)}}>
             <img src={`/${theme}/one.svg`} alt="" />Numbers</button>
-          <button className={`selector ${isItQuote && "disabled"}`}>
+          <button className={`selector ${isItQuote && "disabled"}`} onClick={() => {setPunctuated(prev => !prev)}}>
             <img src={`/${theme}/punctuation.svg`} alt="" />Punctuation</button>
         </div>
       </section>

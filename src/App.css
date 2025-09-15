@@ -6,6 +6,7 @@
   --selected: #46363c; 
   --text-right:  rgb(118, 245, 118);
   --text-wrong: rgb(253, 55, 55);
+  --disabled: rgb(255,255,255,0.6);
 }
 
 [data-theme="light"] {
@@ -186,10 +187,14 @@ main {
   padding: 60px 60px;
 }
 
+.disabled {
+  color: var(--disabled);
+}
+
 .words {
   font-size: 20px;
   padding: 20px;
-  color: #463730;
+  color: var(--text);
   border: 1px solid var(--text);
   border-radius: 4px;
   max-height: 280px;
