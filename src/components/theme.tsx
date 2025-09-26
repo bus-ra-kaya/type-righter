@@ -18,7 +18,7 @@ export default function Theme ({theme,setTheme}:ThemeProps) {
     return (
         <>
          {
-          <button className="dropdown-toggle" onClick={() => setOpen(prev => !prev)}>
+          <button title="Choose theme" className="dropdown-toggle" onClick={() => setOpen(prev => !prev)}>
           <img className="theme-selector" src={`../${theme}/color-selector.svg`} alt="theme selector" />
         </button>
          }

@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import { nanoid } from 'nanoid';
 
 type textInfo = {
+  id: string;
   value: string | null,
   className: string | undefined,
   entered: string | null,
@@ -21,6 +22,7 @@ export default function Main({testText}: MainProps){
 
   function textWithInfo(text: string):textInfo[]{
     return text.split("").map(letter => ({
+      id: nanoid(),
       value: letter,
       className: undefined,
       entered: null,
@@ -60,7 +62,7 @@ export default function Main({testText}: MainProps){
  function textEdit(e: React.KeyboardEvent<HTMLElement>) {
   e.preventDefault();
 
-  const allowed = /^[a-zA-Z0-9]$/.test(e.key) || ["Backspace"," ", "'", ":",";","!","."].includes(e.key);
+  const allowed = /^[a-zA-Z0-9]$/.test(e.key) || ["Backspace"," ",",", '"', "'", ":",";","!","."].includes(e.key);
   if(!allowed) return;
 
   function markChar (pos: number, className: string | undefined, 
@@ -85,18 +87,10 @@ export default function Main({testText}: MainProps){
 
   function handleSpace(){
     const start = wordsFinished === 0 ? 0 : spaceIndexes[wordsFinished -1] +1;
-    const end= currentPos;
-
-    const typedSlice = wordList.slice(start, currentPos);
-    const typedWrong = typedSlice.filter(char => char.className === "red-letter");
-
-    let typedRight = true;
-    for(let i = start; i < end + typedWrong.length; i++){
-      if(wordList[i].className !== "green-letter"){
-        typedRight = false;
-        break;
-      }
-    }
+    const end = spaceIndexes[wordsFinished]; 
+    const typedSlice = wordList.slice(start, end); 
+    const typedRight = typedSlice.every(
+      char => char.className === "green-letter");
 
     if(typedRight) {
       const marked = [...wordList];
@@ -106,7 +100,7 @@ export default function Main({testText}: MainProps){
       markChar(currentPos, "green-letter", null);
       setCurrentPos(prev => prev +1);
     }
-  };
+  }; 
   if(e.key === wordList[currentPos].value){
     if(e.key === " "){
       if(wordList[currentPos].value === " "){
@@ -134,17 +128,8 @@ export default function Main({testText}: MainProps){
       console.log("ran backspace")
       }
     }
-    else if(wrongCount >= 1){
-      const updated = [...wordList];
-      updated.splice(currentPos, 0, {value: null, className: "red-letter",
-        entered: e.key, time: null
-      });
-      setWordList(updated);
-      setCurrentPos(prev => prev +1);
-      console.log("ran wrong count +1")
-    }
     else {
-      markChar(currentPos, "red-letter");
+      markChar(currentPos, "red-letter", e.key);
       setCurrentPos(p => p + 1);
       setWrongCount(p => p + 1);
       console.log("ran the final else")
@@ -155,14 +140,14 @@ export default function Main({testText}: MainProps){
       <main>
         <div tabIndex={0} onKeyDown={(e) => {textEdit(e)}} className="words">
           {typed.map((char, i) => (
-        <CharSpan key={`typed-${i}`} char={char} />
+        <CharSpan key={char.id} char={char} />
       ))}
       {wordList.slice(0, currentPos).map((char, i) => (
-        <CharSpan key={`done-${i}`} char={char} />
+        <CharSpan key={char.id} char={char} />
       ))}
       <span className="cursor">{cursor}</span>
       {wordList.slice(currentPos).map((char, i) => (
-        <CharSpan key={`future-${i}`} char={char} />
+        <CharSpan key={char.id} char={char} />
       ))}
          </div>
           <span className="progress">Progress: {progress}</span>

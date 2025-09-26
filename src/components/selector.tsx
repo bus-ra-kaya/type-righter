@@ -15,7 +15,7 @@ export default function Selector({setTestText, theme}: SelectorProps){
     const [mode,setMode] = useState<"words" | "quote">("words");
     const [punctuated, setPunctuated] = useState<boolean>(false);
     const [numbered,setNumbered] = useState<boolean>(false);
-    const [length,setLength] = useState<TextLength>("medium");
+    const [length,setLength] = useState<TextLength>(null);
         
       function getQuote(): void{
         const sizeMap = {short: 0, medium: 1, long: 2};
@@ -25,13 +25,12 @@ export default function Selector({setTestText, theme}: SelectorProps){
         const randQuote = quotes[size][index];
         setTestText(randQuote);
         setMode("quote");
-
       }
     
       function getWords(): void{
   
         const sizeMap = {short: 20, medium: 45, long: 80};
-        const count = length ? sizeMap[length] : 45;
+        const count = length ? sizeMap[length] : 50;
 
         let words = Array.from({length: count}, () => {
          return (wordlist[Math.floor(Math.random() * wordlist.length)])
@@ -78,27 +77,37 @@ export default function Selector({setTestText, theme}: SelectorProps){
       },[punctuated, numbered, length, mode])
     return (
 
-         <section className="header-bottom">
-        <div> 
-          <span className="choose-selector">Version: </span>
-          <button  className="selector" onClick={() => getWords()}>
+      <section className="header-bottom">
+        <div className="wide-menu">
+          <div> 
+          <span className="option-label">Version: </span>
+          <button  className={clsx("selector", {"active-selector": mode === "words"})} onClick={() => getWords()}>
             <img src={`/${theme}/a-letter.svg`} alt="" />Words</button>
-          <button className="selector" onClick= {() => getQuote()}>
+          <button className={clsx("selector", {"active-selector": mode === "quote"})} onClick= {() => getQuote()}>
             <img src={`/${theme}/quote.svg`} alt="" />Quotes </button> &nbsp;
         </div>
         <div>
-          <span className="choose-selector">Length: </span>
-          <button className="selector" onClick={() => setLength(prev => prev === null ? "short" : null )}>Short</button>
-          <button className="selector" onClick={() => setLength(prev => prev === null ? "medium" : null )}>Medium</button>
-          <button className="selector" onClick={() => setLength(prev => prev === null ? "long" : null )}>Long</button> &nbsp;
+          <span className="option-label">Length: </span>
+          <button className={clsx("selector", {"active-selector": length === "short"})} onClick={() => setLength(prev => prev === null ? "short" : null )}>Short</button>
+          <button className={clsx("selector", {"active-selector": length === "medium"})} onClick={() => setLength(prev => prev === null ? "medium" : null )}>Medium</button>
+          <button className={clsx("selector", {"active-selector": length === "long"})} onClick={() => setLength(prev => prev === null ? "long" : null )}>Long</button> &nbsp;
         </div>
         <div>
-          <span className="choose-selector">Include: </span> 
-          <button className={clsx("selector", {disabled: mode === "words"})} onClick={() => {setNumbered(prev => !prev)}}>
+          <span className={clsx("option-label", {disabled: mode === "quote"})}>Optional: </span> 
+          <button className={clsx("selector", {disabled: mode === "quote", "active-selector" : numbered === true})} onClick={() => {setNumbered(prev => !prev)}}>
             <img src={`/${theme}/one.svg`} alt="" />Numbers</button>
-          <button className={clsx("selector", {disabled: mode === "words"})} onClick={() => {setPunctuated(prev => !prev)}}>
+          <button className={clsx("selector", {disabled: mode === "quote", "active-selector" : punctuated === true})} onClick={() => {setPunctuated(prev => !prev)}}>
             <img src={`/${theme}/punctuation.svg`} alt="" />Punctuation</button>
         </div>
+      </div>
+      <div className= "long-menu">
+        <button className="m-selector">
+          <img src={`/${theme}/version.svg`} alt="" /> Version</button>
+        <button className="m-selector">
+          <img src={`/${theme}/length.svg`} alt="" /> Length</button>
+        <button className="m-selector">
+           <img src={`/${theme}/options.svg`} alt="" />Optional</button>
+      </div>
       </section>
     )
 }
