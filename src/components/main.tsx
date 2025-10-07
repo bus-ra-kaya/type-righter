@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useMemo} from "react";
 import { nanoid } from 'nanoid';
 
 type textInfo = {
@@ -10,15 +10,25 @@ type textInfo = {
 }
 
 interface MainProps {
-    testText: string;
+    readonly testText: string;
+    setFinished:React.Dispatch<React.SetStateAction<boolean>>;
+    setResults: React.Dispatch<React.SetStateAction<textInfo[]>>;
 }
 
-export default function Main({testText}: MainProps){
-  const [typed, setTyped] = useState<textInfo[]>([])
+export default function Main({testText, setFinished,setResults}: Readonly<MainProps>){
   const [wordList, setWordList] = useState<textInfo[]>(() => textWithInfo(testText));
   const [currentPos, setCurrentPos] = useState<number>(0)
   const [wrongCount, setWrongCount] = useState<number>(0)
   const [wordsFinished, setWordsFinished] = useState<number>(0)
+  const [lockIndex, setLockIndex] = useState<number>(0);
+
+  function CharSpan({ char }:{char: textInfo}){
+  return (
+    <span className={char.className}>
+      {char.entered === null ? char.value : char.entered }
+    </span>
+  );
+}
 
   function textWithInfo(text: string):textInfo[]{
     return text.split("").map(letter => ({
@@ -32,7 +42,7 @@ export default function Main({testText}: MainProps){
 
     function reset():void{
       setWordList(textWithInfo(testText));
-      setTyped([]);
+      setLockIndex(0);
       setCurrentPos(0);
       setWrongCount(0);
       setWordsFinished(0);
@@ -42,45 +52,34 @@ export default function Main({testText}: MainProps){
     setWordList(textWithInfo(testText));
   }, [testText]);
 
-  const spaceIndexes: number[] = [];
-  wordList.forEach((char, idx) => {
-  if (char.value === " ") {
-    spaceIndexes.push(idx);
-  }});
+  const spaceIndexes = useMemo(() => {
+    return wordList.reduce<number[]>((acc,char,idx) => {
+      if(char.value === " ") acc.push(idx);
+      return acc;
+    }, [])
+  }, [wordList]);
 
   const cursor: string = "|";
   let progress = `${wordsFinished} / ${spaceIndexes.length +1}`
 
-  function CharSpan({ char }:{char: Readonly<textInfo>}){
-    return (
-      <span className={char.className}>
-        {char.entered === null ? char.value : char.entered }
-      </span>
-    );
-
-  }
  function textEdit(e: React.KeyboardEvent<HTMLElement>) {
   e.preventDefault();
 
-  const allowed = /^[a-zA-Z0-9]$/.test(e.key) || ["Backspace"," ",",", '"', "'", ":",";","!","."].includes(e.key);
+  const allowed = /^[a-zA-Z0-9]$/.test(e.key) || ["Backspace"," ",",","-", '"', "'", ":",";","!","."].includes(e.key);
   if(!allowed) return;
 
-  function markChar (pos: number, className: string | undefined, 
-    entered: string | null = null) {
-
+  function markChar (pos: number, className: string | undefined, entered: string | null = null) {
     const updated = [...wordList];
-    updated[pos] = {...updated[pos], className: className, entered: entered};
+    updated[pos] = {...updated[pos], className: className, entered: entered,
+    time: Date.now()
+    };
     setWordList(updated);
+    return(updated);
     }
 
-
-  function commitWord (marked: typeof wordList ) {
-    const wordInfo = marked.slice(0,currentPos + 1);
-    const updated = marked.slice(currentPos +1);
-
-    setTyped(prev => (prev ? [...prev,...wordInfo] : [...wordInfo]));
-    setWordList(updated);
-    setCurrentPos(0);
+  function commitWord () {
+    setLockIndex(currentPos +1);
+    setCurrentPos(prev => prev+1);
     setWordsFinished(prev => prev +1);
     setWrongCount(0);
   }
@@ -93,15 +92,19 @@ export default function Main({testText}: MainProps){
       char => char.className === "green-letter");
 
     if(typedRight) {
-      const marked = [...wordList];
-      marked[currentPos] = {...marked[currentPos], className: "green-letter", entered:  null};
-      commitWord(marked);
+      markChar(currentPos, "green-letter", " ");
+      commitWord();
     } else {
       markChar(currentPos, "green-letter", null);
       setCurrentPos(prev => prev +1);
     }
   }; 
   if(e.key === wordList[currentPos].value){
+    if(currentPos === wordList.length -1){
+      const updated = markChar(currentPos, "green-letter", e.key);
+      setResults(updated);
+      setFinished(true);
+    }
     if(e.key === " "){
       if(wordList[currentPos].value === " "){
       handleSpace();
@@ -117,36 +120,30 @@ export default function Main({testText}: MainProps){
       markChar(currentPos, "green-letter", e.key);
       setCurrentPos(prev => prev +1);
       setWrongCount(0);
-      console.log("ran the right green letter");
     }
   }
     else if(e.key === "Backspace"){
-      if(currentPos > 0){
+      if(currentPos > lockIndex){
       markChar(currentPos -1, undefined, null);
       setCurrentPos(prev => prev - 1);
       setWrongCount(prev => Math.max(0, prev -1));
-      console.log("ran backspace")
       }
     }
     else {
       markChar(currentPos, "red-letter", e.key);
       setCurrentPos(p => p + 1);
       setWrongCount(p => p + 1);
-      console.log("ran the final else")
   }
 }
- 
+
     return (
       <main>
         <div tabIndex={0} onKeyDown={(e) => {textEdit(e)}} className="words">
-          {typed.map((char, i) => (
-        <CharSpan key={char.id} char={char} />
-      ))}
-      {wordList.slice(0, currentPos).map((char, i) => (
+     {wordList.slice(0, currentPos).map(char => (
         <CharSpan key={char.id} char={char} />
       ))}
       <span className="cursor">{cursor}</span>
-      {wordList.slice(currentPos).map((char, i) => (
+      {wordList.slice(currentPos).map(char => (
         <CharSpan key={char.id} char={char} />
       ))}
          </div>

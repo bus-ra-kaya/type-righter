@@ -5,12 +5,13 @@ import {wordlist} from "../data/wordlist"
 
 interface SelectorProps {
     setTestText: React.Dispatch<React.SetStateAction<string>>;
-    theme: string;
+    setFinished: React.Dispatch<React.SetStateAction<boolean>>;
+    readonly theme: string;
 }
 
 type TextLength = "short" | "medium" | "long" | null
 
-export default function Selector({setTestText, theme}: SelectorProps){
+export default function Selector({setTestText, setFinished, theme}: Readonly<SelectorProps>){
     
     const [mode,setMode] = useState<"words" | "quote">("words");
     const [punctuated, setPunctuated] = useState<boolean>(false);
@@ -74,7 +75,7 @@ export default function Selector({setTestText, theme}: SelectorProps){
        else {
         getWords()
        }
-      },[punctuated, numbered, length, mode])
+      },[punctuated, numbered, length, mode, setFinished])
     return (
 
       <section className="header-bottom">
@@ -88,9 +89,9 @@ export default function Selector({setTestText, theme}: SelectorProps){
         </div>
         <div>
           <span className="option-label">Length: </span>
-          <button className={clsx("selector", {"active-selector": length === "short"})} onClick={() => setLength(prev => prev === null ? "short" : null )}>Short</button>
-          <button className={clsx("selector", {"active-selector": length === "medium"})} onClick={() => setLength(prev => prev === null ? "medium" : null )}>Medium</button>
-          <button className={clsx("selector", {"active-selector": length === "long"})} onClick={() => setLength(prev => prev === null ? "long" : null )}>Long</button> &nbsp;
+          <button className={clsx("selector", {"active-selector": length === "short"})} onClick={() => setLength(prev => prev === null || prev === "medium" || prev === "long" ? "short" : null )}>Short</button>
+          <button className={clsx("selector", {"active-selector": length === "medium"})} onClick={() => setLength(prev => prev === null  || prev === "short" || prev === "long"  ? "medium" : null )}>Medium</button>
+          <button className={clsx("selector", {"active-selector": length === "long"})} onClick={() => setLength(prev => prev === null || prev === "short" || prev === "medium" ? "long" : null )}>Long</button> &nbsp;
         </div>
         <div>
           <span className={clsx("option-label", {disabled: mode === "quote"})}>Optional: </span> 

@@ -3,31 +3,39 @@ import {useState} from "react"
 import Main from "./components/main"
 import Theme from "./components/theme"
 import Selector from "./components/selector"
+import Charts from "./components/charts"
+
+type textInfo = {
+  id: string;
+  value: string | null,
+  className: string | undefined,
+  entered: string | null,
+  time: number | null,
+}
 
 export default function App() {
 
   const[theme, setTheme] = useState<string>("dark");
   const [testText, setTestText] = useState<string>("");
-  const [finished,setFinished] = useState<boolean>(false);
-
-  const mockStats = {
-  wpm: Math.floor(Math.random() * 120) + 20,
-  accuracy: Math.floor(Math.random() * 20) + 80,
-  chars: Math.floor(Math.random() * 1000) + 200,
-  topSpeed: Math.floor(Math.random() * 200) + 50,
-};
-
+  const [finished, setFinished] = useState<boolean>(false);
+  const [results, SetResults] = useState<textInfo[]>([]);
 
   return (
     <>
     <header>
       <section className="header-top">
-          <h1 className="title">TypeRighter</h1>
+        <button className="title-btn" onClick={() => {
+      setFinished(false);
+      SetResults([]);
+        }}>
+          <h1>TypeRighter</h1>
+        </button>
         <Theme theme={theme} setTheme={setTheme}/>
       </section>
-    <Selector setTestText={setTestText} theme={theme} />
+    <Selector setTestText={setTestText} setFinished={setFinished}theme={theme} />
     </header>
-    <Main testText={testText}/>
+    {finished ? <Charts results={results}/>
+    : <Main testText={testText} setFinished={setFinished} setResults={SetResults}/> }
     <footer>
     </footer>
     </>
