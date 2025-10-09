@@ -83,9 +83,9 @@ export default function Selector({setTestText, setFinished, theme}: Readonly<Sel
           <div> 
           <span className="option-label">Version: </span>
           <button  className={clsx("selector", {"active-selector": mode === "words"})} onClick={() => getWords()}>
-            <img src={`/${theme}/a-letter.svg`} alt="" />Words</button>
+            <div className="a-letter icon"></div>Words</button>
           <button className={clsx("selector", {"active-selector": mode === "quote"})} onClick= {() => getQuote()}>
-            <img src={`/${theme}/quote.svg`} alt="" />Quotes </button> &nbsp;
+            <div className="quote icon"></div>Quotes </button> &nbsp;
         </div>
         <div>
           <span className="option-label">Length: </span>
@@ -96,18 +96,30 @@ export default function Selector({setTestText, setFinished, theme}: Readonly<Sel
         <div>
           <span className={clsx("option-label", {disabled: mode === "quote"})}>Optional: </span> 
           <button className={clsx("selector", {disabled: mode === "quote", "active-selector" : numbered === true})} onClick={() => {setNumbered(prev => !prev)}}>
-            <img src={`/${theme}/one.svg`} alt="" />Numbers</button>
+            <div className="numbers icon"></div>Numbers</button>
           <button className={clsx("selector", {disabled: mode === "quote", "active-selector" : punctuated === true})} onClick={() => {setPunctuated(prev => !prev)}}>
-            <img src={`/${theme}/punctuation.svg`} alt="" />Punctuation</button>
+            <div className="punctuation icon"></div>Punctuation</button>
         </div>
       </div>
       <div className= "long-menu">
+        <div className="hover-btn">
+          <div>
+             <button className="m-selector">
+              <div className="version icon"></div>Version
+            </button>
+            <button className="m-selector"> V</button>
+          </div>
+
+            <div className="hover-options">
+              <button className={clsx({"hover-selector": mode === "words"})}>Words</button>
+              <button className={clsx({"hover-selector": mode === "words"})}>Quote</button>
+            </div>
+
+        </div>
         <button className="m-selector">
-          <img src={`/${theme}/version.svg`} alt="" /> Version</button>
+          <div className="length icon"></div> Length</button>
         <button className="m-selector">
-          <img src={`/${theme}/length.svg`} alt="" /> Length</button>
-        <button className="m-selector">
-           <img src={`/${theme}/options.svg`} alt="" />Optional</button>
+           <div className="optional icon"></div>Optional</button>
       </div>
       </section>
     )

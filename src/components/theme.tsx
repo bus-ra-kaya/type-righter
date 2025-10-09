@@ -9,7 +9,7 @@ export default function Theme ({theme,setTheme}:ThemeProps) {
 
       const [open, setOpen] = useState<boolean>(false);
     
-      const themes = ["light","dark","matcha","navy"];
+      const themes = ["light","dark","navy","cupcake"];
     
       useEffect(() => {
         document.body.setAttribute("data-theme",theme);
@@ -18,10 +18,10 @@ export default function Theme ({theme,setTheme}:ThemeProps) {
     return (
       <>
       {open && <div className="dropdown-overlay" onClick={() => setOpen(false)}></div>}
-        <div className="dropdown ">
+        <div className="dropdown">
 
          <button title="Choose theme" className="dropdown-toggle" onClick={() => setOpen(prev => !prev)}>
-          <img className="theme-selector" src={`../${theme}/color-selector.svg`} alt="theme selector" />
+          <div className="theme-selector"></div>
         </button>
 
         {open && (
