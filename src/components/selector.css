@@ -1,0 +1,211 @@
+.wide-menu{
+  padding: 5px;
+  font-weight: bold;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(3,minmax(auto,250px));
+  justify-content: center;
+}
+
+
+.wide-menu > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selector {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-btn-inactive);
+  padding: 6px;
+  color: var(--color-btn-inactive);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap: 5px;
+}
+
+.selector:hover {
+  background-color: var(--color-btn-hover);
+  color: var(--color-text);
+  border-bottom: 2px solid var(--color-text);
+  cursor: pointer;
+}
+
+.selector:active {
+  background-color: var(--color-btn-pressed);
+}
+
+.active-selector {
+  color: var(--color-option-active);
+  border-bottom: 1px solid var(--color-option-active);
+}
+
+.active-selector .icon{
+  background-color: var(--color-option-active);
+}
+
+.icon{
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  background-color: var(--color-btn-inactive);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transition: 0.15s ease;
+}
+
+.version {
+  -webkit-mask-image: url("../icons/version.svg");
+  mask-image: url("../icons/version.svg");
+}
+
+.length {
+  -webkit-mask-image: url("../icons/length.svg");
+  mask-image: url("../icons/length.svg");
+}
+
+.optional{
+  -webkit-mask-image: url("../icons/options.svg");
+  mask-image: url("../icons/options.svg");
+}
+
+.a-letter {
+  -webkit-mask-image: url("../icons/a-letter.svg");
+  mask-image: url("../icons/a-letter.svg");
+}
+
+.quote {
+  -webkit-mask-image: url("../icons/quote.svg");
+  mask-image: url("../icons/quote.svg");
+}
+
+.numbers {
+  -webkit-mask-image: url("../public/icons/one.svg");
+  mask-image: url("../icons/one.svg");
+}
+
+.punctuation {
+  -webkit-mask-image: url("../icons/punctuation.svg");
+  mask-image: url("../icons/punctuation.svg");
+}
+
+.disabled {
+  pointer-events: none;
+  color: var(--color-option-inactive);
+  border-color: var(--color-option-inactive);
+}
+
+.disabled .icon {
+  background-color: var(--color-option-inactive);
+}
+
+.m-selector{
+  font-weight: 600;
+  color: var(--color-btn-inactive);
+  background-color: var(--color-bg);
+  font-size: 14px;
+  border: 1px solid var(--color-option-active);
+  padding: 5px 10px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px var(--color-btn-shadow);
+  width: 100px;
+}
+
+.button-wrapper {
+  position: relative;
+}
+
+.m-dropdown {
+  position: absolute;
+  top: 100%;
+  margin-top: 10px;
+  border: 1px solid var(--color-option-active);
+  border-radius: 4px;
+  overflow: visible;
+  box-shadow: 1px 1px 2px var(--color-option-active);
+}
+
+.m-dropdown > button {
+  background-color: var(--color-bg);
+  color: var(--color-btn-inactive);
+  padding: 8px 25px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  width: 98px;
+  transition: 0.3 ease;
+}
+
+.m-dropdown > button:not(:last-child){
+  border-bottom: 1px solid var(--color-option-active);
+}
+.m-selector:hover,.m-dropdown > button:hover {
+  color: var(--color-text);
+  transform: scale(1.03);
+  box-shadow: 0px 0px 2px var(--color-option-active);
+  border: 1px solid var(--color-option-active);
+  background-color: var(--color-btn-hover);
+}
+.btn-first:hover::before{
+  background-color: var(--color-btn-hover);
+}
+.m-selector:hover .icon, .selector:hover .icon {
+  background-color: var(--color-text);
+}
+.m-selector:active, .m-dropdown > button:active, .btn-first:active::before {
+  background-color: var(--color-btn-pressed);
+}
+.m-menu {
+  display: none;
+  gap: 10px;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.btn-first::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 45px;
+  width: 10px;
+  height: 10px;
+  background: var(--color-bg);
+  border-left: 1px solid var(--color-option-active);
+  border-top: 1px solid var(--color-option-active);
+  transform: rotate(45deg);
+}
+
+
+@media (min-width: 800px) and (max-width: 1049px){
+  .wide-menu {
+    display: none;
+  }
+  .m-menu {
+    display: flex;
+  }
+}
+
+@media (max-width: 799px) {
+
+  .wide-menu {
+    display: none;
+  }
+  .m-menu {
+    display: flex;
+  }
+}
+

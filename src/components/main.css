@@ -1,0 +1,49 @@
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.test {
+  margin-top: 30px;
+  padding: 40px 30px;
+}
+
+
+.green-letter {
+  color: var(--text-right);
+}
+
+.red-letter {
+  color: var(--text-wrong);
+}
+
+
+.words {
+  font-size: 32px;
+  padding: 20px;
+  color: var(--color-text);
+  border: 1px solid var(--color-text);
+  border-radius: 4px;
+  max-height: 280px;
+  overflow: hidden;
+  max-width: 1000px;
+  display: inline-block;
+}
+
+.cursor {
+  animation: blink 1s steps(1) infinite;
+  display: inline-block;
+  width: 0.40ch;
+  margin-left: -4px;
+}
+
+.progress {
+  margin-top: 10px;
+}
+
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}

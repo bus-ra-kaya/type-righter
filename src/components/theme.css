@@ -1,0 +1,80 @@
+.dropdown {
+  position: relative;
+  z-index: 10;
+}
+
+.dropdown-toggle {
+  border: 1px solid transparent;
+  background-color: transparent;
+}
+
+.theme-selector {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  -webkit-mask: url("../public/icons/color-selector.svg") no-repeat center;
+  mask: url("../public/icons/color-selector.svg") no-repeat center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  background-color: var(--color-btn-inactive);
+  transition: 0.15s ease;
+}
+
+.theme-selector:hover {
+  background-color: var(--color-text);
+  transform: scale(1.05);
+}
+
+.dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0, 0.2);
+  z-index: 8;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: -10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-btn-inactive);
+  border-radius: 3px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+}
+
+.dropdown-menu > button {
+  padding: 7px 4px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dropdown-menu > button:not(:last-child){
+  border-bottom: 1px solid var(--color-btn-inactive);
+}
+
+.dropdown-menu > button:first-child::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 22px;
+  width: 10px;
+  height: 10px;
+  background: hsl(195, 100%, 97%);
+  border-left: 1px solid var(--color-btn-inactive);
+  border-top: 1px solid var(--color-btn-inactive);
+  transform: rotate(45deg);
+}
+
+.dropdown-menu > button:first-child:hover::before {
+  background-color: hsl(190, 70%, 85%);
+}
+
+.dropdown-menu > button:first-child:active::before {
+  background-color: hsl(190, 50%, 88%);
+}

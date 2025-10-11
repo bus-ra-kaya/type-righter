@@ -1,4 +1,5 @@
 import {useEffect, useState, useMemo} from "react";
+import "./main.css"
 import { nanoid } from 'nanoid';
 
 type textInfo = {
@@ -49,7 +50,7 @@ export default function Main({testText, setFinished,setResults}: Readonly<MainPr
   }
 
   useEffect(() => {
-    setWordList(textWithInfo(testText));
+    reset();
   }, [testText]);
 
   const spaceIndexes = useMemo(() => {
@@ -137,7 +138,7 @@ export default function Main({testText, setFinished,setResults}: Readonly<MainPr
 }
 
     return (
-      <main>
+      <main className="test">
         <div tabIndex={0} onKeyDown={(e) => {textEdit(e)}} className="words">
      {wordList.slice(0, currentPos).map(char => (
         <CharSpan key={char.id} char={char} />
@@ -148,7 +149,6 @@ export default function Main({testText, setFinished,setResults}: Readonly<MainPr
       ))}
          </div>
           <span className="progress">Progress: {progress}</span>
-          <button className='restart' onClick={() => reset()}>Restart?</button>
     </main>
     )
 }

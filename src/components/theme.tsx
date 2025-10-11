@@ -1,4 +1,5 @@
 import {useState,useEffect} from "react"
+import './theme.css'
 
 interface ThemeProps {
     theme: string;

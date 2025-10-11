@@ -1,23 +1,27 @@
 import {useState, useEffect } from "react";
 import clsx from "clsx";
+import './selector.css'
 import {quotes} from "../data/quotes"
 import {wordlist} from "../data/wordlist"
 
 interface SelectorProps {
+    resetKey: boolean;
     setTestText: React.Dispatch<React.SetStateAction<string>>;
     setFinished: React.Dispatch<React.SetStateAction<boolean>>;
-    readonly theme: string;
 }
 
 type TextLength = "short" | "medium" | "long" | null
+type DropdownSelection = "version" | "length" | "options" | null
 
-export default function Selector({setTestText, setFinished, theme}: Readonly<SelectorProps>){
+export default function Selector({setTestText, setFinished, resetKey}: Readonly<SelectorProps>){
     
     const [mode,setMode] = useState<"words" | "quote">("words");
     const [punctuated, setPunctuated] = useState<boolean>(false);
     const [numbered,setNumbered] = useState<boolean>(false);
     const [length,setLength] = useState<TextLength>(null);
-        
+    
+    const [openDropdown, setOpenDropdown] = useState<DropdownSelection>(null);
+
       function getQuote(): void{
         const sizeMap = {short: 0, medium: 1, long: 2};
         const randomSize = Math.floor(Math.random() * 3);
@@ -75,10 +79,10 @@ export default function Selector({setTestText, setFinished, theme}: Readonly<Sel
        else {
         getWords()
        }
-      },[punctuated, numbered, length, mode, setFinished])
+      },[punctuated, numbered, length, mode, setFinished,resetKey])
     return (
 
-      <section className="header-bottom">
+      <section>
         <div className="wide-menu">
           <div> 
           <span className="option-label">Version: </span>
@@ -100,27 +104,47 @@ export default function Selector({setTestText, setFinished, theme}: Readonly<Sel
           <button className={clsx("selector", {disabled: mode === "quote", "active-selector" : punctuated === true})} onClick={() => {setPunctuated(prev => !prev)}}>
             <div className="punctuation icon"></div>Punctuation</button>
         </div>
-      </div>
-      <div className= "long-menu">
-        <div className="hover-btn">
-          <div>
-             <button className="m-selector">
-              <div className="version icon"></div>Version
-            </button>
-            <button className="m-selector"> V</button>
-          </div>
-
-            <div className="hover-options">
-              <button className={clsx({"hover-selector": mode === "words"})}>Words</button>
-              <button className={clsx({"hover-selector": mode === "words"})}>Quote</button>
-            </div>
-
         </div>
-        <button className="m-selector">
-          <div className="length icon"></div> Length</button>
-        <button className="m-selector">
-           <div className="optional icon"></div>Optional</button>
-      </div>
+        <div className= "m-menu">
+            <div className="button-wrapper">
+              <button className="m-selector" 
+                onClick={()=> setOpenDropdown(prev => prev === "version" ? null: "version")}>
+                <div className="version icon"></div> Version
+              </button>
+              {openDropdown === "version" && (
+                <div className="m-dropdown">
+                  <button className="btn-first" onClick={() => {getWords(); setOpenDropdown(null)}}>Words</button>
+                  <button onClick={() => {getQuote(); setOpenDropdown(null)}}>Quote</button>
+                </div>
+              )}
+            </div>
+            <div className="button-wrapper">
+              <button className="m-selector" 
+            onClick={()=> setOpenDropdown(prev => prev === "length" ? null: "length")}>
+               <div className="length icon"></div> Length
+            </button>
+            {openDropdown === "length" && (
+              <div className="m-dropdown">
+                <button className="btn-first" onClick={() => {setLength(prev => prev === null || prev === "medium" || prev === "long" ? "short" : null ); setOpenDropdown(null)}}>Short</button>
+                <button onClick={() => {setLength(prev => prev === null || prev === "short" || prev === "long" ? "medium" : null ); setOpenDropdown(null)}}>Medium</button>
+                <button onClick={() => {setLength(prev => prev === null || prev === "short" || prev === "medium" ? "long" : null ); setOpenDropdown(null)}}>Long</button>
+              </div>
+            )}
+            </div>
+            <div className="button-wrapper">
+              <button className="m-selector" 
+              onClick={()=> setOpenDropdown(prev => prev === "options" ? null: "options")}>
+                <div className="optional icon"></div> Options
+              </button>
+              {openDropdown === "options" && (
+                <div className="m-dropdown">
+                  <button className="btn-first" onClick={() => {setNumbered(prev => !prev); setOpenDropdown(null)}}>Numbers</button>
+                  <button onClick={() => {setNumbered(prev => !prev); setOpenDropdown(null)}}>Punctuation</button>
+                </div>
+              )}
+            </div>
+            
+        </div>
       </section>
     )
 }

@@ -19,6 +19,7 @@ export default function App() {
   const [testText, setTestText] = useState<string>("");
   const [finished, setFinished] = useState<boolean>(false);
   const [results, SetResults] = useState<textInfo[]>([]);
+  const [resetKey,setResetKey] = useState<boolean>(false);
 
   return (
     <>
@@ -32,10 +33,13 @@ export default function App() {
         </button>
         <Theme theme={theme} setTheme={setTheme}/>
       </section>
-    <Selector setTestText={setTestText} setFinished={setFinished}theme={theme} />
+    <Selector  resetKey={resetKey} setTestText={setTestText} setFinished={setFinished} />
     </header>
+    <main>
     {finished ? <Charts results={results}/>
-    : <Main testText={testText} setFinished={setFinished} setResults={SetResults}/> }
+    : <><Main testText={testText} setFinished={setFinished} setResults={SetResults}/>
+    <button className='restart' onClick={() => setResetKey(prev => !prev)}>Restart?</button> </>}
+    </main>
     <footer>
     </footer>
     </>
