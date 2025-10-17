@@ -1,0 +1,23 @@
+.progress-bar {
+  position: relative;
+  width: 200px;
+  height: 25px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-text);
+  border-radius: 15px;
+  overflow: hidden;
+}
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--color-progress);
+  transition: width 0.1s ease-in-out;
+}
+.progress-label {
+    font-weight: 500;
+    position: absolute;
+    left: 90px;
+}
+   

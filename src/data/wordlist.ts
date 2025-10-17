@@ -559,7 +559,6 @@ export const wordlist: string[] = [
   "nothing",
   "notice",
   "now",
-  "n't",
   "number",
   "occur",
   "of",

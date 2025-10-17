@@ -17,7 +17,7 @@
   -webkit-mask-size: contain;
   mask-size: contain;
   background-color: var(--color-btn-inactive);
-  transition: 0.15s ease;
+  transition: 0.1s ease;
 }
 
 .theme-selector:hover {

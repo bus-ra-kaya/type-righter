@@ -1,4 +1,5 @@
 import {useEffect, useState, useMemo} from "react";
+import ProgressBar from "./progressbar";
 import "./main.css"
 import { nanoid } from 'nanoid';
 
@@ -20,16 +21,21 @@ export default function Main({testText, setFinished,setResults}: Readonly<MainPr
   const [wordList, setWordList] = useState<textInfo[]>(() => textWithInfo(testText));
   const [currentPos, setCurrentPos] = useState<number>(0)
   const [wrongCount, setWrongCount] = useState<number>(0)
+
   const [wordsFinished, setWordsFinished] = useState<number>(0)
   const [lockIndex, setLockIndex] = useState<number>(0);
+
+  const [previousText, setPreviousText] = useState<string | null>(null);
+  const [transition, setTransition] = useState<boolean>(false);
+
+
 
   function CharSpan({ char }:{char: textInfo}){
   return (
     <span className={char.className}>
       {char.entered === null ? char.value : char.entered }
     </span>
-  );
-}
+  );}
 
   function textWithInfo(text: string):textInfo[]{
     return text.split("").map(letter => ({
@@ -49,10 +55,6 @@ export default function Main({testText, setFinished,setResults}: Readonly<MainPr
       setWordsFinished(0);
   }
 
-  useEffect(() => {
-    reset();
-  }, [testText]);
-
   const spaceIndexes = useMemo(() => {
     return wordList.reduce<number[]>((acc,char,idx) => {
       if(char.value === " ") acc.push(idx);
@@ -61,15 +63,16 @@ export default function Main({testText, setFinished,setResults}: Readonly<MainPr
   }, [wordList]);
 
   const cursor: string = "|";
-  let progress = `${wordsFinished} / ${spaceIndexes.length +1}`
 
  function textEdit(e: React.KeyboardEvent<HTMLElement>) {
+  if (e.key !== "Tab"){
   e.preventDefault();
+  }
 
   const allowed = /^[a-zA-Z0-9]$/.test(e.key) || ["Backspace"," ",",","-", '"', "'", ":",";","!","."].includes(e.key);
   if(!allowed) return;
 
-  function markChar (pos: number, className: string | undefined, entered: string | null = null) {
+  function markChar (pos: number, className: string | undefined , entered: string | null = null) {
     const updated = [...wordList];
     updated[pos] = {...updated[pos], className: className, entered: entered,
     time: Date.now()
@@ -96,39 +99,38 @@ export default function Main({testText, setFinished,setResults}: Readonly<MainPr
       markChar(currentPos, "green-letter", " ");
       commitWord();
     } else {
-      markChar(currentPos, "green-letter", null);
+      markChar(currentPos, "red-letter", " ");
       setCurrentPos(prev => prev +1);
+      setLockIndex(currentPos +1);
     }
   }; 
-  if(e.key === wordList[currentPos].value){
-    if(currentPos === wordList.length -1){
-      const updated = markChar(currentPos, "green-letter", e.key);
-      setResults(updated);
-      setFinished(true);
-    }
-    if(e.key === " "){
-      if(wordList[currentPos].value === " "){
-      handleSpace();
-      setWrongCount(0);
-      }
-      else{
-        markChar(currentPos, "red-letter");
-        setCurrentPos(prev => prev +1);
-        setWrongCount(prev => prev +1);
-      }
-    }
-    else {
-      markChar(currentPos, "green-letter", e.key);
-      setCurrentPos(prev => prev +1);
-      setWrongCount(0);
-    }
-  }
-    else if(e.key === "Backspace"){
+  if(e.key === "Backspace"){
       if(currentPos > lockIndex){
       markChar(currentPos -1, undefined, null);
       setCurrentPos(prev => prev - 1);
       setWrongCount(prev => Math.max(0, prev -1));
       }
+      return;
+    }
+
+  if(currentPos === wordList.length -1){
+    const className = e.key === wordList[currentPos].value ? "green-letter" : "red-letter";
+    const updated = markChar(currentPos, className, e.key);
+    setResults(updated);
+    setFinished(true);
+    return;
+  }
+  if(e.key === wordList[currentPos].value){
+    if(e.key === " "){
+      handleSpace();
+      return;
+    }
+    else {
+      markChar(currentPos, "green-letter", e.key);
+      setCurrentPos(prev => prev +1);
+      setWrongCount(0);
+      return;
+    }
     }
     else {
       markChar(currentPos, "red-letter", e.key);
@@ -136,19 +138,90 @@ export default function Main({testText, setFinished,setResults}: Readonly<MainPr
       setWrongCount(p => p + 1);
   }
 }
+function renderWords(){
+  let wordStart = 0;
+  const elements = [];
 
-    return (
-      <main className="test">
-        <div tabIndex={0} onKeyDown={(e) => {textEdit(e)}} className="words">
-     {wordList.slice(0, currentPos).map(char => (
-        <CharSpan key={char.id} char={char} />
-      ))}
-      <span className="cursor">{cursor}</span>
-      {wordList.slice(currentPos).map(char => (
-        <CharSpan key={char.id} char={char} />
-      ))}
-         </div>
-          <span className="progress">Progress: {progress}</span>
-    </main>
-    )
+  for(let i= 0; i < spaceIndexes.length + 1; i++){
+
+  const wordEnd = (i === spaceIndexes.length) ? wordList.length : spaceIndexes[i];
+  const currentWordChars = wordList.slice(wordStart, wordEnd);
+  const cursorRelativePos = currentPos - wordStart;
+  const isCursorInWord = (currentPos >= wordStart && currentPos <= wordEnd);
+  elements.push(
+    <span key= {`word-${wordStart}`} className="word-container">
+      {currentWordChars.map((char, index) => {
+        let element = [];
+        if(isCursorInWord && (index === cursorRelativePos)){
+          element.push(
+           <span key="cursor" className="cursor">
+              {cursor}
+              </span>
+          )
+        }
+        element.push(<CharSpan key= {char.id} char={char} />)
+        return element;
+      })}  
+    </span>
+  )
+
+  if (i < spaceIndexes.length) {
+    const spaceIndex = spaceIndexes[i];
+    const spaceChar = wordList[spaceIndex];
+
+    if(currentPos === spaceIndex){
+      elements.push(
+        <span key="cursor-space" className="cursor">
+          {cursor}
+        </span>
+      )
+    }
+    elements.push(<CharSpan key={spaceChar.id} char= {spaceChar} />);
+  }
+  wordStart = wordEnd + 1;
+  }
+  return elements;
+  }
+
+   useEffect(() => {
+      setPreviousText(wordList.map(c => c.value).join(""));
+      setTransition(true);
+
+      const transitionDur = 300;
+
+      const timer1 = setTimeout(() => {
+        reset();
+      }, transitionDur);
+
+      const timer2 = setTimeout(() => {
+        setTransition(false);
+        setPreviousText(null);
+      }, transitionDur + 50);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+  }, [testText]);
+
+  return (
+    <>
+    <main className="test">
+      <div 
+        role= "application"
+        tabIndex={0}
+        aria-label="typing test area"
+        onKeyDown={(e) => {textEdit(e)}} 
+        className={`words ${transition ? "fade-out" : ""}`}
+      >
+        {transition && previousText ? (
+          <span>{previousText}</span>
+        ) : (
+          renderWords()
+        )}
+      </div>
+  </main>
+  <ProgressBar current={currentPos} total={wordList.length}/>
+  </>
+)
 }

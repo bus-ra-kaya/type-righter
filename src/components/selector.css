@@ -189,6 +189,11 @@
   transform: rotate(45deg);
 }
 
+.m-active-selector {
+  background-color: var(--color-btn-hover);
+  color: var(--color-option-active);
+}
+
 
 @media (min-width: 800px) and (max-width: 1049px){
   .wide-menu {

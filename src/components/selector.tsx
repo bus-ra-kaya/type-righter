@@ -113,8 +113,8 @@ export default function Selector({setTestText, setFinished, resetKey}: Readonly<
               </button>
               {openDropdown === "version" && (
                 <div className="m-dropdown">
-                  <button className="btn-first" onClick={() => {getWords(); setOpenDropdown(null)}}>Words</button>
-                  <button onClick={() => {getQuote(); setOpenDropdown(null)}}>Quote</button>
+                  <button className={clsx("btn-first", {"m-active-selector": mode === "words"})} onClick={() => {getWords(); setOpenDropdown(null)}}>Words</button>
+                  <button className={clsx({"m-active-selector": mode === "quote"})} onClick={() => {getQuote(); setOpenDropdown(null)}}>Quote</button>
                 </div>
               )}
             </div>
@@ -125,9 +125,9 @@ export default function Selector({setTestText, setFinished, resetKey}: Readonly<
             </button>
             {openDropdown === "length" && (
               <div className="m-dropdown">
-                <button className="btn-first" onClick={() => {setLength(prev => prev === null || prev === "medium" || prev === "long" ? "short" : null ); setOpenDropdown(null)}}>Short</button>
-                <button onClick={() => {setLength(prev => prev === null || prev === "short" || prev === "long" ? "medium" : null ); setOpenDropdown(null)}}>Medium</button>
-                <button onClick={() => {setLength(prev => prev === null || prev === "short" || prev === "medium" ? "long" : null ); setOpenDropdown(null)}}>Long</button>
+                <button className={clsx("btn-first", {"m-active-selector": length === "short"})} onClick={() => {setLength(prev => prev === null || prev === "medium" || prev === "long" ? "short" : null ); setOpenDropdown(null)}}>Short</button>
+                <button className={clsx({"m-active-selector": length === "medium"})} onClick={() => {setLength(prev => prev === null || prev === "short" || prev === "long" ? "medium" : null ); setOpenDropdown(null)}}>Medium</button>
+                <button className={clsx({"m-active-selector": length === "long"})} onClick={() => {setLength(prev => prev === null || prev === "short" || prev === "medium" ? "long" : null ); setOpenDropdown(null)}}>Long</button>
               </div>
             )}
             </div>
@@ -138,8 +138,8 @@ export default function Selector({setTestText, setFinished, resetKey}: Readonly<
               </button>
               {openDropdown === "options" && (
                 <div className="m-dropdown">
-                  <button className="btn-first" onClick={() => {setNumbered(prev => !prev); setOpenDropdown(null)}}>Numbers</button>
-                  <button onClick={() => {setNumbered(prev => !prev); setOpenDropdown(null)}}>Punctuation</button>
+                  <button className={clsx("btn-first", {"m-active-selector": numbered === true})} onClick={() => {setNumbered(prev => !prev); setOpenDropdown(null)}}>Numbers</button>
+                  <button className={clsx({"m-active-selector": punctuated === true})} onClick={() => {setPunctuated(prev => !prev); setOpenDropdown(null)}}>Punctuation</button>
                 </div>
               )}
             </div>
